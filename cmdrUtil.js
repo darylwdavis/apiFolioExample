@@ -51,9 +51,15 @@ function parseZinc(zinc){
           return term;
         return parseInt(term);
       }
-
+      meta=meta.split(':');
+      var version =meta[1].substring(1,4);
+      var wId='';
+      if(meta[2]){
+        if(meta[2].split(' ')[1]=='watchId'){wId=replaceAll(meta[3],'"','');}
+      }
       ret.meta = {
-        ver: meta.split(':')[1].substring(1,4)
+        ver: version,
+        watchId: wId
       }
       ret.cols = [];
       for(var k = 0; k < headers.length; k++){
@@ -123,6 +129,9 @@ function parseZinc(zinc){
     }
 }
 
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+}
 
 var Cookie;
 var Connected = false;
@@ -130,12 +139,16 @@ var autoUpdate=false;
 $(document).ready(function(){
   $('#navbar-subtitle-host').text('Host: '+host);
   $('#navbar-subtitle-project').text('Project: '+project);
+  $('#watch-subscribe').click(function(){
+    watchOpen();
+  });
   $('#navbar_logout').click(function(){
     logout();
   });
   $('#update-timer-enable').click(function(){
     if($('#update-timer-enable').text()=='Updating...'){
       clearTimeout(updateTimeout);
+      watchClose();
       autoUpdate=false;
       $('#update-timer-enable').text('Auto Update')
     }else{
@@ -164,6 +177,8 @@ $(document).ready(function(){
         Accept: "application/json; charset=utf-8",         
         "Content-Type": "text/plain; charset=utf-8"
       };
+    if(host)
+        headers['Cookie'] = Cookie
     $.ajax({
       type: 'GET',
       url: host+'/auth/'+project+'/api?'+$('#cloud-host-username').val(),
@@ -192,6 +207,7 @@ $(document).ready(function(){
           },
           data: data,
           success: function(data){
+            Cookie = data.substring(data.indexOf(':')+1);
             Connected = true;
             location.reload();
             $('#loginModal').modal('hide');
