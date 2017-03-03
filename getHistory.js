@@ -53,5 +53,14 @@ function  readAHistory(cb){
     }, 'text/plain', host,project)
 }
 
-readAPoint();
-//readAHistory();
+var updateIntervalSeconds=.1;
+var updateTimeout;
+function update(){
+  updateTimeout= setTimeout(function () {
+    readAPoint();
+    //readAHistory();
+    updateIntervalSeconds=updateTimeSeconds;
+    $('#last-update').text("updated: "+ new Date().toLocaleTimeString());
+    if (autoUpdate){update();}
+  }, updateIntervalSeconds*1000);
+};

@@ -1,7 +1,3 @@
-//var host='https://commander.kmccontrols.com' ;
-var host='http://10.3.3.86' ;
-var project='kmcCommanderBxProject';
-
 function sendExpr(expr, cb, accept, host, pname){
   var h = '';
   if(host)
@@ -130,12 +126,23 @@ function parseZinc(zinc){
 
 var Cookie;
 var Connected = false;
-
+var autoUpdate=false;
 $(document).ready(function(){
   $('#navbar-subtitle-host').text('Host: '+host);
   $('#navbar-subtitle-project').text('Project: '+project);
   $('#navbar_logout').click(function(){
     logout();
+  });
+  $('#update-timer-enable').click(function(){
+    if($('#update-timer-enable').text()=='Updating...'){
+      clearTimeout(updateTimeout);
+      autoUpdate=false;
+      $('#update-timer-enable').text('Auto Update')
+    }else{
+      autoUpdate=true;
+      update();
+      $('#update-timer-enable').text('Updating...')
+    }
   });
   $('#cloud-host-username').keyup(function(event){
       if ( event.which == 13 ) {

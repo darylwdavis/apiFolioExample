@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <link rel="icon" href="favicon.ico">
   <script type="text/javascript">
       var element_id = "manualRefreshHref" ; //namew of div or object that you want the link to appear in (Div is best)
       var link_text = "<p>Try a manual <a href='historyIndex.html'>refresh</a>.</p>" ; //link location
@@ -31,6 +32,7 @@
     <script src="bootstrap.min.js"></script>
     <link href="site.css" rel="stylesheet">
     <!-- <link href="style.min.css" rel="stylesheet"> -->
+    <script src="config.js"></script>
     <script src="cmdrUtil.js"></script>
     <script src="getHistory.js"></script>
     <!-- <link href="dataTables.bootstrap.css" rel="stylesheet"> -->
@@ -80,14 +82,16 @@
     </nav>
 
       <div class="container">
+
       <div id="tab-all" style="margin-top:78px;">
-    
-        <h3 id="subHeader"  class="lead section-title">Meter Data<br/> 
-          This page will refresh momentarily.</h3>
-        <h4 id="getData" style="display: inline-block;white-space:pre-wrap;">Getting...</h4>
-        
-    <table id="discover-data" style="width:100%">  </table>
+      <div class="btn btn-primary" id="update-timer-enable">Auto Update</div>
+      <span id="last-update" style="margin-left:10px;"></span>
+      <div>
+        <h4 id="getData" style="display: inline-block;white-space:pre-wrap;"></h4>
+       <table id="discover-data" style="width:100%">  </table>
+      </div>
     <footer>
+
         <div style="margin-top:300px;"> </div>
         <div class="modal-footer">
           <div id="manualRefreshHref"></div>
