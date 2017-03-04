@@ -7,11 +7,11 @@ function sendExpr(expr, cb, accept, host, pname){
     "Content-Type": "text/plain; charset=utf-8"
   };
   if(host)
-    headers['Cookie'] = Cookie
+    headers.Cookie = Cookie;
   var data = 'ver:"2.0"\n'+
     'expr\n'+
     '"'+expr.replace(/"/g,'\\\"')+'"';
-    console.log(h+'/api/'+(pname?pname:project)+'/evalAll')
+    //console.log(h+'/api/'+(pname?pname:project)+'/evalAll');
   $.ajax({
     type: 'POST',
     url: h+'/api/'+(pname?pname:project)+'/evalAll',
@@ -38,19 +38,6 @@ function parseZinc(zinc){
       var meta = rows[0];
       var headers = rows[1].split(',');
 
-      function parseTerm(term, name){
-        if(term[0] == '"')
-          return term.substring(1,term.length-1);
-        if(term[0] == '@')
-          return term;
-        if(term[0] == '`')
-          return term;
-        if(term == 'M')
-          return '✓';
-        if(term[term.length-1] == 'Z' || (name && name == 'mod'))
-          return term;
-        return parseInt(term);
-      }
       meta=meta.split(':');
       var version =meta[1].substring(1,4);
       var wId='';
@@ -60,7 +47,7 @@ function parseZinc(zinc){
       ret.meta = {
         ver: version,
         watchId: wId
-      }
+      };
       ret.cols = [];
       for(var k = 0; k < headers.length; k++){
         var obj = {};
@@ -85,7 +72,7 @@ function parseZinc(zinc){
             continue;
           }
           // if not escaped, track if we're in quotes
-          if((escaped % 2) == 0){
+          if((escaped % 2) === 0){
             escaped = 0;
             if(str[j] == '"'){
               inQuotes = !inQuotes;
@@ -93,7 +80,7 @@ function parseZinc(zinc){
             }
           }
         // if not escaped, track if we're in geoCoord
-          if((escaped % 2) == 0){
+          if((escaped % 2) === 0){
             escaped = 0;
             if(str[j] == 'C' && str[j+1] == '('){
               inCoords = true;
@@ -125,10 +112,22 @@ function parseZinc(zinc){
       }
       return ret;
     }else{
-      return ret
+      return ret;
     }
 }
-
+function parseTerm(term, name){
+  if(term[0] == '"')
+    return term.substring(1,term.length-1);
+  if(term[0] == '@')
+    return term;
+  if(term[0] == '`')
+    return term;
+  if(term == 'M')
+    return '✓';
+  if(term[term.length-1] == 'Z' || (name && name == 'mod'))
+    return term;
+  return parseInt(term);
+}
 function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
@@ -150,11 +149,11 @@ $(document).ready(function(){
       clearTimeout(updateTimeout);
       watchClose();
       autoUpdate=false;
-      $('#update-timer-enable').text('Auto Update')
+      $('#update-timer-enable').text('Auto Update');
     }else{
       autoUpdate=true;
       update();
-      $('#update-timer-enable').text('Updating...')
+      $('#update-timer-enable').text('Updating...');
     }
   });
   $('#cloud-host-username').keyup(function(event){
@@ -178,7 +177,7 @@ $(document).ready(function(){
         "Content-Type": "text/plain; charset=utf-8"
       };
     if(host)
-        headers['Cookie'] = Cookie
+        headers.Cookie = Cookie;
     $.ajax({
       type: 'GET',
       url: host+'/auth/'+project+'/api?'+$('#cloud-host-username').val(),
@@ -197,7 +196,7 @@ $(document).ready(function(){
         var shaObj2 = new jsSHA('SHA-1', 'TEXT');
         shaObj2.update(hmac+':'+nonce);
         var hash = shaObj2.getHash('B64');
-        var data = 'nonce:'+nonce+'\n'+'digest:'+hash;
+        data = 'nonce:'+nonce+'\n'+'digest:'+hash;
         $.ajax({
           type: 'POST',
           url: host+'/auth/'+project+'/api?'+$('#cloud-host-username').val(),
@@ -235,7 +234,7 @@ function logout(){
           Connected = false;
           location.reload();
           }
-      })
+      });
  }
 
 sendExpr('read(kmcInstallProfiles)', function(err, data){
