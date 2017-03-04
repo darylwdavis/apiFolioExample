@@ -7,13 +7,13 @@ function  readAPoint(cb){
   var usage=0;
   var energyUsage = {};
   var pointNameVal='';
-  console.log('Getting the point data...')
-    sendExpr('readAll(bacnetCur>=\"AV\" and bacnetCur<\"B\")', function(err,data){
+  console.log('Getting the point data...');
+    sendExpr('readAll(point and sp)', function(err,data){
       data = parseZinc(data);
-      $('#subHeader').text('Found:')
+      $('#subHeader').text('Found:');
       if(data.rows.length){
         for(var i in data.rows){
-            pointNameVal+=data.rows[i]["navName"]+':'+data.rows[i]["curVal"]+'\r\n';
+            pointNameVal+=data.rows[i].navName+':'+data.rows[i].curVal+'\r\n';
         }
       }
       $('#getData').html(pointNameVal);
@@ -21,7 +21,7 @@ function  readAPoint(cb){
       if(cb){
         cb(err, energyUsage);
       }
-  }, 'text/plain', host,project)
+  }, 'text/plain', host,project);
 }
 
 function  readAHistory(cb){
@@ -50,10 +50,10 @@ function  readAHistory(cb){
       if(cb){
         cb(err, energyUsage);
       }
-    }, 'text/plain', host,project)
+    }, 'text/plain', host,project);
 }
 
-var updateIntervalSeconds=.1;
+var updateIntervalSeconds=0.1;
 var updateTimeout;
 function update(){
   updateTimeout= setTimeout(function () {
@@ -63,4 +63,4 @@ function update(){
     $('#last-update').text("updated: "+ new Date().toLocaleTimeString());
     if (autoUpdate){update();}
   }, updateIntervalSeconds*1000);
-};
+}
