@@ -149,10 +149,14 @@ function startUpdateTimerButton(){
 }
 function stopUpdateTimerButton(){
     clearTimeout(updateTimeout);
+    clearTimeout(leaseTimeOut);
     watchClose();
     autoUpdate=false;
     $('#watch-subscribe').text('Open Watch');
     $('#update-timer-enable').text('Auto Update');
+}
+function addMilliseconds(date, ms) {
+    return new Date(date.getTime() + ms);
 }
 
 var Cookie;
@@ -163,6 +167,8 @@ $(document).ready(function(){
   $('#navbar-subtitle-project').text('Project: '+project);
   $('#watch-subscribe').click(function(){
     watchOpen();
+    watchLeaseTimeout();
+    $('#last-update').text('Lease Expires at '+ addMilliseconds(new Date(),leaseTimeMs).toLocaleTimeString());
     $('#watch-subscribe').text('Watch Open');
   });
   $('#navbar_logout').click(function(){

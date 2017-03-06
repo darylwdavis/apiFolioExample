@@ -127,8 +127,20 @@ function update(){
     //readAPoint();
     //readAHistory();
     watchPoll();
+    clearTimeout(leaseTimeOut);
+    watchLeaseTimeout();
     updateIntervalSeconds=updateTimeSeconds;
     $('#last-update').text("updated: "+ new Date().toLocaleTimeString());
     if (autoUpdate){update();}
   }, updateIntervalSeconds*1000);
+}
+
+var leaseTimeMs=60000;
+var leaseTimeout;
+function watchLeaseTimeout(){
+  leaseTimeOut=setTimeout(function () {
+    stopUpdateTimerButton();
+    clearTimeout(updateTimeout);
+    $('#last-update').text('Lease Expired '+ new Date().toLocaleTimeString());
+  }, leaseTimeMs);
 }
