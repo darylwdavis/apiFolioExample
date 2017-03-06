@@ -142,61 +142,12 @@ function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
 
-function startUpdateTimerButton(){
-    autoUpdate=true;
-    update();
-    $('#update-timer-enable').text('Updating...');
-}
-function stopUpdateTimerButton(){
-    clearTimeout(updateTimeout);
-    clearTimeout(leaseTimeOut);
-    watchClose();
-    autoUpdate=false;
-    $('#watch-subscribe').text('Open Watch');
-    $('#update-timer-enable').text('Auto Update');
-}
-function addMilliseconds(date, ms) {
-    return new Date(date.getTime() + ms);
-}
-
 var Cookie;
 var Connected = false;
 var autoUpdate=false;
-$(document).ready(function(){
-  $('#navbar-subtitle-host').text('Host: '+host);
-  $('#navbar-subtitle-project').text('Project: '+project);
-  $('#watch-subscribe').click(function(){
-    watchOpen();
-    watchLeaseTimeout();
-    $('#last-update').text('Lease Expires at '+ addMilliseconds(new Date(),leaseTimeMs).toLocaleTimeString());
-    $('#watch-subscribe').text('Watch Open');
-  });
-  $('#navbar_logout').click(function(){
-    logout();
-  });
-  $('#update-timer-enable').click(function(){
-    if($('#update-timer-enable').text()=='Updating...'){
-      stopUpdateTimerButton();
-    }else{
-      startUpdateTimerButton();
-    }
-  });
-  $('#cloud-host-username').keyup(function(event){
-      if ( event.which == 13 ) {
-           $('#cloud-host-password').focus();
-      }
-   });
-   $('#cloud-host-password').keyup(function(event){
-      if ( event.which == 13 ) {
-          $('#cloud-modal-login').click();
-      }
-   });
-   $('#loginModal').on('shown.bs.modal', function (){
-     $('#cloud-host-username').focus();
-   });
-  $('#cloud-modal-login').click(function(){
-    // get the userSalt and nonce from /auth/CloudProjectName/api?username
-    $('#cloud-host-basicStatus').text('');
+
+function login(username,password){
+ // get the userSalt and nonce from /auth/CloudProjectName/api?username
       var headers = {          
         Accept: "application/json; charset=utf-8",         
         "Content-Type": "text/plain; charset=utf-8"
@@ -205,7 +156,7 @@ $(document).ready(function(){
         headers.Cookie = Cookie;
     $.ajax({
       type: 'GET',
-      url: host+'/auth/'+project+'/api?'+$('#cloud-host-username').val(),
+      url: host+'/auth/'+project+'/api?'+username,
       headers: headers,
       xhrFields: {
         withCredentials: true
@@ -215,8 +166,8 @@ $(document).ready(function(){
         var userSalt = rows[1].split(':')[1];
         var nonce = rows[3].split(':')[1];
         var shaObj = new jsSHA('SHA-1', "TEXT");
-        shaObj.setHMACKey($('#cloud-host-password').val(), "TEXT");
-        shaObj.update($('#cloud-host-username').val()+':'+userSalt);
+        shaObj.setHMACKey(password, "TEXT");
+        shaObj.update(username+':'+userSalt);
         var hmac = shaObj.getHMAC("B64");
         var shaObj2 = new jsSHA('SHA-1', 'TEXT');
         shaObj2.update(hmac+':'+nonce);
@@ -224,7 +175,7 @@ $(document).ready(function(){
         data = 'nonce:'+nonce+'\n'+'digest:'+hash;
         $.ajax({
           type: 'POST',
-          url: host+'/auth/'+project+'/api?'+$('#cloud-host-username').val(),
+          url: host+'/auth/'+project+'/api?'+username,
           headers: headers,
           xhrFields: {
             withCredentials: true
@@ -234,15 +185,14 @@ $(document).ready(function(){
             Cookie = data.substring(data.indexOf(':')+1);
             Connected = true;
             location.reload();
-            $('#loginModal').modal('hide');
+            loginSuccess();
           }
         }).fail(function(){
-          $('#cloud-host-basicStatus').text('Invalid username or password');
+           loginFail();
         });
       }
     });
-});
-
+}
 function logout(){
     var headers = {
       Accept: "application/json; charset=utf-8",
