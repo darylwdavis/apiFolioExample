@@ -264,10 +264,13 @@ function logout(){
 
 sendExpr('read(kmcInstallProfiles)', function(err, data){
   if(err) return;
-  if(data.substring(0,3)=='<ht'||data.substring(0,3)=='<!D'){
-     return $('#loginModal').modal('show');
-  }
-
+  if(checkForLoginScreen(data)){showLogin();}
 }, 'text/plain',host,project);
 
-});
+function checkForLoginScreen(data){
+    if(data.substring(0,3)=='<ht'||data.substring(0,3)=='<!D'){
+     return true;
+  }else{
+    return false;
+  }
+}

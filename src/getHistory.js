@@ -47,15 +47,19 @@ function  watchOpen(cb){
   var energyUsage = {};
   console.log('Subscribing to watch.');
     sendExpr('readAll(point and sp).watchOpen("api Example App")', function(err,data){
-      data = parseZinc(data);
-      if (data.meta.evalErr){
-        $('#getData').html(data.meta.evalErr);
-        return;
-      }
-      watchId=data.meta.watchId;
-      if(data.rows.length){updateValues(data.rows);}
-      if(cb){
-        cb(err, energyUsage);
+      if(checkForLoginScreen(data)){
+        showLogin();
+      }else{
+        data = parseZinc(data);
+        if (data.meta.evalErr){
+          $('#getData').html(data.meta.evalErr);
+          return;
+        }
+        watchId=data.meta.watchId;
+        if(data.rows.length){updateValues(data.rows);}
+        if(cb){
+          cb(err, energyUsage);
+        }
       }
   }, 'text/plain', host,project);
 }
