@@ -40,12 +40,22 @@ function parseZinc(zinc){
 
       meta=meta.split(':');
       var version =meta[1].substring(1,4);
+      var eErr='';
+      var dErr='';
       var wId='';
       if(meta[2]){
         if(meta[2].split(' ')[1]=='watchId'){wId=replaceAll(meta[3],'"','');}
       }
+      if(meta[4]&&meta[5]){
+        if(meta[4]=="EvalErr"){eErr=meta[5];}
+      }
+      if(meta[9]&&meta[10]){
+        if(meta[9]=="Err"){dErr=meta[10];}
+      }
       ret.meta = {
         ver: version,
+        dataErr:dErr,
+        evalErr:eErr,
         watchId: wId
       };
       ret.cols = [];
