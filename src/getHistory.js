@@ -1,7 +1,7 @@
 //How to get history Data from Commander Bx
 
 $.support.cors = true;
-
+var devices=[];
 var tempPower;
 function  readAPoint(cb){
   var usage=0;
@@ -30,13 +30,7 @@ function  watchPoll(cb){
   console.log('Getting the point changes...');
     sendExpr('watchPoll(\"'+watchId+'\")', function(err,data){
       data = parseZinc(data);
-      if(data.rows.length){
-        for(var i in data.rows){
-            pointNameVal+=data.rows[i].navName+':'+data.rows[i].curVal+'\r\n';
-        }
-      }
-      $('#getData').html(pointNameVal);
-
+      if(data.rows.length){updateValues(data.rows);}
       if(cb){
         cb(err, energyUsage);
       }
@@ -46,23 +40,35 @@ var watchId;
 function  watchOpen(cb){
   var usage=0;
   var energyUsage = {};
-  var pointNameVal='';
   console.log('Subscribing to watch.');
     sendExpr('readAll(point and sp).watchOpen("api Example App")', function(err,data){
       data = parseZinc(data);
       watchId=data.meta.watchId;
-      $('#subHeader').text('Found:');
-      if(data.rows.length){
-        for(var i in data.rows){
-            pointNameVal+=data.rows[i].navName+':'+data.rows[i].curVal+'\r\n';
-        }
-      }
-      $('#getData').html(pointNameVal);
-
+      if(data.rows.length){updateValues(data.rows);}
       if(cb){
         cb(err, energyUsage);
       }
   }, 'text/plain', host,project);
+}
+function updateValues(deviceList){
+    for(var i in deviceList){
+      var pntid=deviceList[i].id;
+      if(devices[pntid]){
+        //update point value
+        devices[pntid].curVal=deviceList[i].curVal;
+      }else{
+        //Add new point to device list
+        devices[pntid]=deviceList[i];
+      }
+    }
+  displayPoints();
+}
+function displayPoints(){
+  var pointNameVal='';
+  for(var i in devices){
+    pointNameVal+=devices[i].navName+':'+devices[i].curVal+'\r\n';
+  }
+  $('#getData').html(pointNameVal);
 }
 
 function  watchClose(cb){
