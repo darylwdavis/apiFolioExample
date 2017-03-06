@@ -142,6 +142,19 @@ function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
 
+function startUpdateTimerButton(){
+    autoUpdate=true;
+    update();
+    $('#update-timer-enable').text('Updating...');
+}
+function stopUpdateTimerButton(){
+    clearTimeout(updateTimeout);
+    watchClose();
+    autoUpdate=false;
+    $('#watch-subscribe').text('Open Watch');
+    $('#update-timer-enable').text('Auto Update');
+}
+
 var Cookie;
 var Connected = false;
 var autoUpdate=false;
@@ -150,20 +163,16 @@ $(document).ready(function(){
   $('#navbar-subtitle-project').text('Project: '+project);
   $('#watch-subscribe').click(function(){
     watchOpen();
+    $('#watch-subscribe').text('Watch Open');
   });
   $('#navbar_logout').click(function(){
     logout();
   });
   $('#update-timer-enable').click(function(){
     if($('#update-timer-enable').text()=='Updating...'){
-      clearTimeout(updateTimeout);
-      watchClose();
-      autoUpdate=false;
-      $('#update-timer-enable').text('Auto Update');
+      stopUpdateTimerButton();
     }else{
-      autoUpdate=true;
-      update();
-      $('#update-timer-enable').text('Updating...');
+      startUpdateTimerButton();
     }
   });
   $('#cloud-host-username').keyup(function(event){
