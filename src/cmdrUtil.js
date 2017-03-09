@@ -151,7 +151,7 @@ function setBoolCurVal(dataArray){
       var e=pnt.enum;
       if(typeof(e)==='string'){
         var enumValues=e.split(',');
-        if(enumValues.length>=1){
+        if(enumValues.length>1){
           dataArray.rows[i].curVal=(pnt.curVal=='F')? enumValues[0] : enumValues[1];
         }else{
           dataArray.rows[i].curVal=(pnt.curVal=='F')? 'False':'True';
