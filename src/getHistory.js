@@ -2,6 +2,7 @@
 
 $.support.cors = true;
 var devices=[];
+var pollPointCount=0;
 var tempPower;
 function  readAPoint(cb){
   var usage=0;
@@ -31,6 +32,7 @@ function  watchPoll(cb){
     sendExpr('watchPoll(\"'+watchId+'\")', function(err,data){
       data = parseZinc(data);
       data = setBoolCurVal(data);
+      pollPointCount=data.rows.length;
       if (data.meta.dataErr){
         $('#getData').html(data.meta.dataErr);
         stopUpdateTimerButton();
@@ -46,6 +48,7 @@ var watchId;
 function  watchOpen(cb){
   var usage=0;
   var energyUsage = {};
+  devices=[];
   console.log('Subscribing to watch.');
     sendExpr('readAll(point and sp).watchOpen("api Example App")', function(err,data){
       if(checkForLoginScreen(data)){
@@ -67,7 +70,7 @@ function  watchOpen(cb){
 }
 function updateValues(deviceList){
     for(var i in deviceList){
-      var pntid=deviceList[i].id;
+      var pntid=deviceList[i].id.split(' ')[0];
       if(devices[pntid]){
         //update point value
         devices[pntid].curVal=deviceList[i].curVal;
@@ -80,8 +83,10 @@ function updateValues(deviceList){
 }
 function displayPoints(){
   var pointNameVal='';
+  var pntNum=0;
   for(var i in devices){
-    pointNameVal+=devices[i].navName+':'+devices[i].curVal+'\r\n';
+    pntNum++;
+    pointNameVal+=pntNum+'. '+devices[i].navName+':'+devices[i].curVal+'\r\n';
   }
   $('#getData').html(pointNameVal);
 }
@@ -133,10 +138,12 @@ function update(){
     //readAPoint();
     //readAHistory();
     watchPoll();
-    clearTimeout(leaseTimeOut);
-    watchLeaseTimeout();
+    clearTimeout(leaseTimeOut); //Clear subscription timeout
+    watchLeaseTimeout(); //Restart timeout
     updateIntervalSeconds=updateTimeSeconds;
-    $('#last-update').text("updated: "+ new Date().toLocaleTimeString());
+    var pollPoints='';
+    if(pollPointCount>0) pollPoints=pollPointCount+' at ';
+    $('#last-update').text("updated: "+pollPoints+ new Date().toLocaleTimeString());
     if (autoUpdate){update();}
   }, updateIntervalSeconds*1000);
 }
