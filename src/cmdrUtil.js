@@ -136,6 +136,8 @@ function parseTerm(term, name){
     return '✓';
   if(term[term.length-1] == 'Z' || (name && name == 'mod'))
     return term;
+  if(isNaN(term))
+    return term;
   return parseInt(term);
 }
 function replaceAll(str, find, replace) {
