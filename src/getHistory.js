@@ -30,6 +30,7 @@ function  watchPoll(cb){
   console.log('Getting the point changes...');
     sendExpr('watchPoll(\"'+watchId+'\")', function(err,data){
       data = parseZinc(data);
+      data = setBoolCurVal(data);
       if (data.meta.dataErr){
         $('#getData').html(data.meta.dataErr);
         stopUpdateTimerButton();
@@ -51,6 +52,7 @@ function  watchOpen(cb){
         showLogin();
       }else{
         data = parseZinc(data);
+        data = setBoolCurVal(data);
         if (data.meta.evalErr){
           $('#getData').html(data.meta.evalErr);
           return;

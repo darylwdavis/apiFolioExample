@@ -144,6 +144,25 @@ function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
 
+function setBoolCurVal(dataArray){
+  for(var i in dataArray.rows){
+    var pnt=dataArray.rows[i];
+    if(pnt.kind=="Bool"){
+      var e=pnt.enum;
+      if(typeof(e)==='string'){
+        var enumValues=e.split(',');
+        if(enumValues.length>=1){
+          dataArray.rows[i].curVal=(pnt.curVal=='F')? enumValues[0] : enumValues[1];
+        }else{
+          dataArray.rows[i].curVal=(pnt.curVal=='F')? 'False':'True';
+        }
+      }else{
+        dataArray.rows[i].curVal=(pnt.curVal=='F')? 'False':'True';
+      }
+    }
+  }
+  return dataArray;
+}
 var Cookie;
 var Connected = false;
 var autoUpdate=false;
