@@ -149,15 +149,13 @@ function setBoolCurVal(dataArray){
     var pnt=dataArray.rows[i];
     if(pnt.kind=="Bool"){
       var e=pnt.enum;
-      if(typeof(e)==='string'){
-        var enumValues=e.split(',');
-        if(enumValues.length>1){
-          dataArray.rows[i].curVal=(pnt.curVal=='F')? enumValues[0] : enumValues[1];
-        }else{
-          dataArray.rows[i].curVal=(pnt.curVal=='F')? 'False':'True';
-        }
+      var isString= (typeof(e)==='string');
+      var enumValues=e? e.split(','):"";
+      var multipleEnumValues=(enumValues.length>1);
+      if(isString && multipleEnumValues){
+        dataArray.rows[i].curVal=(pnt.curVal=='T')? enumValues[1] : enumValues[0];
       }else{
-        dataArray.rows[i].curVal=(pnt.curVal=='F')? 'False':'True';
+        dataArray.rows[i].curVal=(pnt.curVal=='T')? 'True':'False';
       }
     }
   }

@@ -9,7 +9,7 @@ function  readAPoint(cb){
   var energyUsage = {};
   var pointNameVal='';
   console.log('Getting the point data...');
-    sendExpr('readAll(point and sp)', function(err,data){
+    sendExpr('readAll(point and cmd)', function(err,data){
       data = parseZinc(data);
       $('#subHeader').text('Found:');
       if(data.rows.length){
@@ -50,7 +50,7 @@ function  watchOpen(cb){
   var energyUsage = {};
   devices=[];
   console.log('Subscribing to watch.');
-    sendExpr('readAll(point and sp).watchOpen("api Example App")', function(err,data){
+    sendExpr('readAll(point and cmd).watchOpen("api Example App")', function(err,data){
       if(checkForLoginScreen(data)){
         showLogin();
       }else{
