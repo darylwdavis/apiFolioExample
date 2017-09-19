@@ -35,6 +35,7 @@ $(document).ready(function(){
   $('#navbar-subtitle-project').text('Project: '+project);
   $('#watch-subscribe').click(function(){
     watchOpen();
+    runAdhocCommand();
     watchLeaseTimeout();
     $('#last-update').text('Lease Expires at '+ addMilliseconds(new Date(),leaseTimeMs).toLocaleTimeString());
     $('#watch-subscribe').text('Watch Open');

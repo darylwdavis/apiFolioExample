@@ -68,6 +68,19 @@ function  watchOpen(cb){
       }
   }, 'text/plain', host,project);
 }
+
+function  runAdhocCommand(cb){
+  var usage=0;
+  console.log('Running the command');
+    sendExpr('parseSetpointActionsCloud("id==@210278ad-2710c233","2017-07-21T14:56-7:00_15min_79.9°F")', function(err,data){
+      if(checkForLoginScreen(data)){
+        showLogin();
+      }else{
+        data = parseZinc(data);
+      }
+  }, 'text/plain', host,project);
+}
+
 function updateValues(deviceList){
     for(var i in deviceList){
       var pntid=deviceList[i].id.split(' ')[0];
